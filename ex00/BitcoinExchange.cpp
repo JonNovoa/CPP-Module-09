@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jnovoa-a <jnovoa-a@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jnovoa-a <jnovoa-a@student.42urduliz.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/08 19:39:21 by jnovoa-a          #+#    #+#             */
-/*   Updated: 2026/10/09 13:04:45 by jnovoa-a         ###   ########.fr       */
+/*   Updated: 2026/10/09 19:56:26 by jnovoa-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
+#include <cstdlib>
 
 BitcoinExchange::BitcoinExchange()
 {
@@ -93,9 +94,34 @@ void BitcoinExchange::processInput(const std::string &filename)
         // Convertimos el valor a double
         std::stringstream valueStream(value);
         double amount;
-        valueStream >> amount;
-
-        std::cout << "Date: " << date << " Value: " << amount << std::endl;
+        std::string extra;
+        //Comprobamos que sea un numero valido
+        if(!(valueStream >> amount) || (valueStream >> extra))
+        {
+            std::cerr << "Error:invalid value" << std::endl;
+            continue;
+        }
+        //Comprobamos que no sea negativo
+        if(amount < 0)
+        {
+            std::cerr << "Error: not a positive number" << std::endl;
+            continue;
+        }
+        if(amount > 1000)
+        {
+            std::cerr << "Error: too large number" << std::endl;
+            continue;
+        }
+        try
+        {
+                double rate = getExchangeRate(date);
+                std::cout << date << " => " << amount
+                          << " = " << amount * rate << std::endl;
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << "Error: " << e.what() << std::endl;
+            }
         }
     }
 }
@@ -123,9 +149,9 @@ bool BitcoinExchange::isValidDate(const std::string &date) const
         return false;
     if(day < 1 || day > 31)
         return false;
-    if(month == 4 || month == 6 || month == 9 || month == 11 && day > 30)
+    if((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)
         return false;
-    //Comprobamos enero
+    //Comprobamos febrero
     if(month == 2)
     {
         bool leap = (year % 4 == 0 && year % 100 != 0)
@@ -135,4 +161,19 @@ bool BitcoinExchange::isValidDate(const std::string &date) const
             return false;
     }
     return true;
+}
+
+double BitcoinExchange::getExchangeRate(const std::string &date) const
+{
+    //Buscamos la fecha en al base de datos
+    std::map<std::string, double>::const_iterator it = _database.lower_bound(date);
+    //Si es exacta devolvemos su precio
+    if(it != _database.end() && it->first == date)
+        return it->second;
+    //Si no hay fecha anterior
+    if(it == _database.begin())
+        throw std::runtime_error("no earlielr date available");
+    //Retrocedemos a la fecha anterior mas cercana
+    --it;
+    return it->second;
 }

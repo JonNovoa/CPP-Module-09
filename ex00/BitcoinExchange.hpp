@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jnovoa-a <jnovoa-a@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jnovoa-a <jnovoa-a@student.42urduliz.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/08 19:34:33 by jnovoa-a          #+#    #+#             */
-/*   Updated: 2026/10/08 21:12:33 by jnovoa-a         ###   ########.fr       */
+/*   Updated: 2026/10/09 19:08:33 by jnovoa-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,9 @@ class BitcoinExchange
         //Procesamos el archivo de entrada
         void processInput(const std::string &filename);
         bool isValidDate(const std::string &date) const;
-    
+        //Buscamos el precio de la fecha indicada
+        double getExchangeRate(const std::string &date) const;
+        
 };
 
 
