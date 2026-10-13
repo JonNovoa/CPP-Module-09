@@ -1,0 +1,107 @@
+# CPP09 - ex00: Bitcoin Exchange
+
+## Descripción
+
+El objetivo de este ejercicio es crear un programa llamado `btc` que calcula el valor de una cantidad de bitcoins en una fecha determinada, utilizando los precios almacenados en una base de datos.
+
+El programa recibe un archivo como argumento. Cada línea contiene una fecha y una cantidad de bitcoins con el siguiente formato:
+
+```text
+date | value
+```
+
+Para calcular el resultado, busca el precio correspondiente a la fecha indicada en `data.csv`. Si no existe un precio para esa fecha exacta, utiliza el precio de la fecha anterior más cercana disponible en la base de datos.
+
+## Estructura del proyecto
+
+* `Makefile`: compila el programa.
+* `main.cpp`: comprueba los argumentos e inicia el programa.
+* `BitcoinExchange.hpp`: contiene la declaración de la clase.
+* `BitcoinExchange.cpp`: implementa la lectura de datos, la validación y los cálculos.
+* `data.csv`: contiene las fechas y los precios de Bitcoin.
+* `input.txt`: archivo de entrada utilizado para las pruebas.
+
+## Implementación
+
+La clase `BitcoinExchange` utiliza un contenedor `std::map` para almacenar las fechas y sus precios.
+
+Las principales funciones son:
+
+* `loadDatabase()`: carga los precios desde el archivo CSV.
+* `processInput()`: lee y procesa las líneas del archivo de entrada.
+* `isValidDate()`: comprueba que la fecha tenga un formato válido y que el día exista en el calendario.
+* `getExchangeRate()`: obtiene el precio de la fecha indicada o el de la fecha anterior más cercana.
+
+El programa también comprueba que los valores sean numéricos, no negativos y que no superen el límite de 1000.
+
+## Compilación
+
+```bash
+make
+```
+
+Para eliminar los archivos objeto:
+
+```bash
+make clean
+```
+
+Para eliminar los archivos objeto y el ejecutable:
+
+```bash
+make fclean
+```
+
+Para recompilar desde cero:
+
+```bash
+make re
+```
+
+## Ejecución
+
+```bash
+./btc input.txt
+```
+
+El programa lee las fechas y cantidades del archivo indicado y muestra el resultado de multiplicar cada cantidad por el precio correspondiente de Bitcoin.
+
+## Ejemplo
+
+Entrada:
+
+```text
+date | value
+2011-01-03 | 3
+2011-01-09 | 2
+```
+
+Salida:
+
+```text
+2011-01-03 => 3 = 0.9
+2011-01-09 => 2 = 0.64
+```
+
+En el segundo caso, se utiliza el precio de la fecha anterior más cercana disponible en la base de datos.
+
+## Tratamiento de errores
+
+El programa controla distintos errores, entre ellos:
+
+* Archivo de entrada no disponible.
+* Fechas con formato incorrecto o inexistentes.
+* Valores no numéricos.
+* Valores negativos.
+* Valores superiores a 1000.
+* Fechas anteriores a la primera fecha disponible en la base de datos.
+
+## Conceptos utilizados
+
+* C++98.
+* Clases y encapsulación.
+* `std::map` e iteradores.
+* Lectura de archivos con `std::ifstream`.
+* Procesamiento de cadenas con `std::stringstream`.
+* Excepciones y tratamiento de errores.
+* Validación de fechas y valores.

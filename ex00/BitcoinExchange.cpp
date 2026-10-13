@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jnovoa-a <jnovoa-a@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: jnovoa-a <jnovoa-a@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/08 19:39:21 by jnovoa-a          #+#    #+#             */
-/*   Updated: 2026/10/09 19:56:26 by jnovoa-a         ###   ########.fr       */
+/*   Updated: 2026/10/13 13:01:32 by jnovoa-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,69 +62,85 @@ void BitcoinExchange::loadDatabase(const std::string &filename)
 
 void BitcoinExchange::processInput(const std::string &filename)
 {
-    std::ifstream file(filename.c_str());
-    if(!file.is_open())
-    {
-        std::cerr << "Error: could not open file" << std::endl;
-        return;
-    }
-    std::string line;
-    std::getline(file, line);
-    while(std::getline(file, line))
-    {
-        std::stringstream ss(line);
-        std::string date;
-        std::string value;
+std::ifstream file(filename.c_str());
+if(!file.is_open())
+{
+std::cerr << "Error: could not open file." << std::endl;
+return;
+}
 
-        if(std::getline(ss, date, '|') && std::getline(ss, value))
+std::string line;
+std::getline(file, line);
+
+while(std::getline(file, line))
+{
+    std::stringstream ss(line);
+    std::string date;
+    std::string value;
+
+    if(std::getline(ss, date, '|') && std::getline(ss, value))
+    {
+        // Quitamos los espacios de la fecha
+        // dateStream copia el texto de date, y después leemos
+        // desde dateStream para volver a guardar el resultado en date
+        std::stringstream dateStream(date);
+        dateStream >> date;
+
+        // Comprobamos si la fecha es valida
+        if(!isValidDate(date))
         {
-            // Quitamos los espacios de la fecha
-            //dateStream copia el texto de date, y después leemos 
-            //desde dateStream para volver a guardar el resultado en date
-            std::stringstream dateStream(date);
-            dateStream >> date;
-
-            // Comprobamos si la fecha es valida
-            if (!isValidDate(date))
-            {
-                std::cerr << "Error: bad input => " << date << std::endl;
-                continue;
-            }
+            std::cerr << "Error: bad input => " << date << std::endl;
+            continue;
+        }
 
         // Convertimos el valor a double
         std::stringstream valueStream(value);
         double amount;
         std::string extra;
-        //Comprobamos que sea un numero valido
+
+        // Comprobamos que sea un numero valido
         if(!(valueStream >> amount) || (valueStream >> extra))
         {
-            std::cerr << "Error:invalid value" << std::endl;
+            std::cerr << "Error: invalid value." << std::endl;
             continue;
         }
-        //Comprobamos que no sea negativo
+
+        // Comprobamos que no sea negativo
         if(amount < 0)
         {
-            std::cerr << "Error: not a positive number" << std::endl;
+            std::cerr << "Error: not a positive number." << std::endl;
             continue;
         }
+
+        // Comprobamos que no supere 1000
         if(amount > 1000)
         {
-            std::cerr << "Error: too large number" << std::endl;
+            std::cerr << "Error: too large a number." << std::endl;
             continue;
         }
+
+        // Buscamos el precio y calculamos el resultado
         try
         {
-                double rate = getExchangeRate(date);
-                std::cout << date << " => " << amount
-                          << " = " << amount * rate << std::endl;
-            }
-            catch (const std::exception &e)
-            {
-                std::cerr << "Error: " << e.what() << std::endl;
-            }
+            double rate = getExchangeRate(date);
+            std::cout << date << " => " << amount
+                      << " = " << amount * rate << std::endl;
+        }
+        catch(const std::exception &e)
+        {
+            std::cerr << "Error: " << e.what() << std::endl;
         }
     }
+    else
+    {
+        // Comprobamos si la linea tiene el formato correcto
+        std::cerr << "Error: bad input => " << line << std::endl;
+        continue;
+    }
 }
+
+}
+
 
 bool BitcoinExchange::isValidDate(const std::string &date) const
 {
