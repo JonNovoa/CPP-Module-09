@@ -1,0 +1,152 @@
+# CPP09 - ex01: Reverse Polish Notation (RPN)
+
+**## Descripción**
+
+El objetivo de este ejercicio es crear un programa llamado `RPN` que calcule el resultado de una expresión matemática escrita en notación polaca inversa.
+
+El programa recibe una expresión como argumento. En este formato, los operadores se escriben después de los números, por lo que no es necesario utilizar paréntesis.
+
+Por ejemplo, la expresión:
+
+```text
+8 9 * 9 - 9 - 9 - 4 - 1 +
+```
+
+Se calcula realizando las operaciones en el orden en el que aparecen y da como resultado `42`.
+
+El programa debe admitir los operadores `+`, `-`, `*` y `/`, y mostrar el resultado por la salida estándar. Si se produce un error, debe mostrar un mensaje por la salida de error.
+
+**## Estructura del proyecto**
+
+* `Makefile`: compila el programa.
+* `main.cpp`: comprueba los argumentos, inicia el programa y muestra el resultado.
+* `RPN.hpp`: contiene la declaración de la clase `RPN`.
+* `RPN.cpp`: implementa el cálculo de las expresiones en notación polaca inversa.
+
+**## Implementación**
+
+La clase `RPN` utiliza un contenedor `std::stack` para almacenar los números y realizar las operaciones.
+
+Las principales partes de la implementación son:
+
+* `calculate()`: procesa la expresión y devuelve el resultado final.
+* `std::istringstream`: permite leer la expresión y separarla en números y operadores.
+* `std::stack`: almacena los números pendientes de utilizar en las operaciones.
+* `top()` y `pop()`: permiten consultar y extraer los números de la parte superior de la pila.
+* `push()`: introduce en la pila los números y los resultados de las operaciones.
+
+Cuando el programa encuentra un número, lo guarda en la pila. Cuando encuentra un operador, extrae los dos últimos números, realiza la operación correspondiente y guarda el resultado de nuevo en la pila.
+
+Al finalizar, debe quedar un único número en la pila, que será el resultado de la expresión.
+
+El programa también comprueba que haya suficientes números para realizar cada operación, que no se divida entre cero y que la expresión tenga un formato válido.
+
+**## Compilación**
+
+```bash
+make
+```
+
+Para eliminar los archivos objeto:
+
+```bash
+make clean
+```
+
+Para eliminar los archivos objeto y el ejecutable:
+
+```bash
+make fclean
+```
+
+Para recompilar desde cero:
+
+```bash
+make re
+```
+
+**## Ejecución**
+
+El programa recibe la expresión directamente como argumento:
+
+```bash
+./RPN "8 9 * 9 - 9 - 9 - 4 - 1 +"
+```
+
+**## Ejemplos**
+
+Primera expresión:
+
+```bash
+./RPN "8 9 * 9 - 9 - 9 - 4 - 1 +"
+```
+
+Salida:
+
+```text
+42
+```
+
+Segunda expresión:
+
+```bash
+./RPN "7 7 * 7 -"
+```
+
+Salida:
+
+```text
+42
+```
+
+Tercera expresión:
+
+```bash
+./RPN "1 2 * 2 / 2 * 2 4 - +"
+```
+
+Salida:
+
+```text
+0
+```
+
+Expresión incorrecta:
+
+```bash
+./RPN "(1 + 1)"
+```
+
+Salida:
+
+```text
+Error
+```
+
+**## Tratamiento de errores**
+
+El programa controla distintos errores, entre ellos:
+
+* Número incorrecto de argumentos.
+* Expresiones con un formato no válido.
+* Operadores sin suficientes números en la pila.
+* División entre cero.
+* Expresiones que no dejan un único resultado final en la pila.
+
+**## Conceptos utilizados**
+
+* C++98.
+* Clases y encapsulación.
+* `std::stack` y operaciones sobre una pila.
+* Lectura y procesamiento de cadenas con `std::istringstream`.
+* Notación polaca inversa.
+* Operadores aritméticos.
+* Excepciones y tratamiento de errores.
+* Compilación mediante `Makefile`.
+
+**## Datos del ejercicio**
+
+* Módulo: CPP09.
+* Ejercicio: ex01.
+* Nombre del programa: `RPN`.
+* Contenedor utilizado: `std::stack`.
