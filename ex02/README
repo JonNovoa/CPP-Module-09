@@ -1,0 +1,154 @@
+# CPP09 - ex02: PmergeMe
+
+## Descripción
+
+El objetivo de este ejercicio es ordenar una secuencia de números enteros positivos utilizando el algoritmo **Ford-Johnson**, también conocido como *Merge-Insert Sort*.
+
+El programa utiliza dos contenedores diferentes para realizar la ordenación:
+
+- `std::vector`
+- `std::deque`
+
+Al finalizar, muestra la secuencia original, la secuencia ordenada y el tiempo empleado por cada contenedor.
+
+## Tecnologías y restricciones
+
+- Lenguaje: C++98.
+- Compilación con `-Wall -Wextra -Werror`.
+- Contenedores: `std::vector` y `std::deque`.
+- Algoritmo de ordenación: Ford-Johnson.
+- No se utiliza `std::sort` para ordenar los números.
+
+## Archivos
+
+- `main.cpp`: punto de entrada del programa. Crea el objeto, procesa los argumentos, ejecuta las ordenaciones y muestra los resultados.
+- `PmergeMe.hpp`: declaración de la clase, sus atributos y sus funciones.
+- `PmergeMe.cpp`: implementación de la validación de argumentos, el algoritmo de ordenación y la medición de tiempos.
+- `Makefile`: compila el programa y permite limpiar los archivos generados.
+
+## Compilación
+
+Para compilar el programa:
+
+```bash
+make
+```
+
+Para limpiar los archivos objeto:
+
+```bash
+make clean
+```
+
+Para eliminar también el ejecutable:
+
+```bash
+make fclean
+```
+
+Para recompilar desde cero:
+
+```bash
+make re
+```
+
+## Ejecución
+
+El programa recibe los números como argumentos:
+
+```bash
+./PmergeMe 9 3 7 1 5
+```
+
+Salida esperada, con tiempos variables:
+
+```text
+Before: 9 3 7 1 5
+After:  1 3 5 7 9
+Time to process a range of 5 elements with std::vector : ... us
+Time to process a range of 5 elements with std::deque : ... us
+```
+
+## Funcionamiento
+
+### 1. Validación de los argumentos
+
+El programa comprueba que se hayan proporcionado números y que los argumentos sean válidos.
+
+- No se permiten argumentos vacíos.
+- No se permiten caracteres que no sean dígitos.
+- Los números deben ser positivos.
+- Los valores no pueden superar el límite de un `int`.
+- Los números originales se guardan para poder mostrarlos antes de ordenar.
+
+Si un argumento no es válido, el programa muestra un mensaje de error.
+
+### 2. Ordenación con Ford-Johnson
+
+El algoritmo Ford-Johnson busca ordenar los números utilizando comparaciones de forma eficiente.
+
+El procedimiento general es:
+
+1. Agrupar los números por parejas.
+2. Comparar los elementos de cada pareja y colocar el menor y el mayor en sus posiciones correspondientes.
+3. Ordenar las parejas según sus elementos mayores.
+4. Construir una cadena inicial ordenada.
+5. Insertar los elementos pendientes mediante búsqueda binaria, siguiendo un orden basado en la secuencia de Jacobsthal.
+6. Insertar el elemento sobrante al final del proceso, si el número de elementos es impar.
+
+El proceso se aplica recursivamente para ordenar los elementos mayores de las parejas.
+
+### 3. Uso de los dos contenedores
+
+El programa realiza la ordenación dos veces:
+
+- Una con `std::vector`.
+- Otra con `std::deque`.
+
+Ambos contenedores permiten almacenar los números y acceder a sus elementos. La comparación entre ellos permite medir el tiempo empleado por cada implementación.
+
+### 4. Medición del tiempo
+
+Se registra el tiempo antes y después de cada ordenación utilizando `std::clock()`.
+
+La diferencia se convierte a microsegundos y se muestra junto al nombre del contenedor y la cantidad de elementos procesados.
+
+Los tiempos pueden variar entre ejecuciones y no tienen por qué ser iguales para `vector` y `deque`.
+
+## Pruebas
+
+Ejemplos de ejecución:
+
+```bash
+./PmergeMe 9 3 7 1 5
+./PmergeMe 8 2 6 4
+./PmergeMe 42
+./PmergeMe 3 3 1 2
+```
+
+Pruebas de argumentos inválidos:
+
+```bash
+./PmergeMe
+./PmergeMe abc
+./PmergeMe -5
+./PmergeMe 0
+./PmergeMe 2147483648
+```
+
+Prueba con una cantidad grande de números:
+
+```bash
+./PmergeMe $(shuf -i 1-100000 -n 3000)
+```
+
+## Conceptos aprendidos
+
+- Uso de `std::vector` y `std::deque`.
+- Validación y conversión de argumentos.
+- Recursividad.
+- Ordenación mediante el algoritmo Ford-Johnson.
+- Inserción mediante búsqueda binaria.
+- Uso de la secuencia de Jacobsthal.
+- Medición y comparación de tiempos de ejecución.
+- Compilación y gestión de proyectos mediante `Makefile`.
